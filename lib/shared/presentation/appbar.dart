@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../style_const.dart';
+import '../../core/style_const.dart';
 
 class MyAppBar extends AppBar {
   MyAppBar({

@@ -1,4 +1,4 @@
-import 'package:bitacora/core/widgets/appbar.dart';
+import 'package:bitacora/shared/presentation/appbar.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/style_const.dart';

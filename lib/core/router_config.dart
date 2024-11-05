@@ -37,7 +37,6 @@ final routerConfig = GoRouter(initialLocation: '/', routes: [
     path: '/exportar',
     builder: (context, state) => const ExportarPage(),
   ),
-
 ]);
 
 const kHomePageRoute = 'home';

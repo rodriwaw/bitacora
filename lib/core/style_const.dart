@@ -8,4 +8,5 @@ class StyleConst{
   static const kcolorCard = Color(0xFFD2CEC7);
   static const kcolorBlanco = Color(0xFFFFFFFF);
   static const kcolorBg = Color(0xFFF5F5F5);
+  static const kcolorVerdeAdd = Color(0xFF4CAF50);
 }

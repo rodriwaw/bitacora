@@ -3,8 +3,59 @@ import 'package:bitacora/core/style_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class MainMenuPage extends StatelessWidget {
+class MainMenuPage extends StatefulWidget {
   const MainMenuPage({super.key});
+
+  @override
+  State<MainMenuPage> createState() => _MainMenuPageState();
+}
+
+class _MainMenuPageState extends State<MainMenuPage> {
+  late double _width;
+  bool _isLandScape = false;
+
+  late double _cardSideSize;
+  late double _spacing;
+  @override
+  Widget build(BuildContext context) => _MainMenuPageView(this);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _isLandScape = MediaQuery.of(context).orientation == Orientation.landscape;
+    _width = MediaQuery.of(context).size.width;
+    _setSizes();
+  }
+
+  void _setSizes() {
+    _spacing = _width * .025;
+    if (_isLandScape) {
+      _cardSideSize = _width * (1 / 5);
+    } else {
+      _cardSideSize = _width * (1 / 3);
+    }
+  }
+
+  void _goToAsociados() {
+    context.pushNamed(kAsociadosPageRoute);
+  }
+
+  void _goToLlaves() {
+    context.pushNamed(kLlavesPageRoute);
+  }
+
+  void _goToBitacora() {
+    context.pushNamed(kBitacoraPageRoute);
+  }
+
+  void _goToExportar() {
+    context.pushNamed(kExportarPageRoute);
+  }
+}
+
+class _MainMenuPageView extends StatelessWidget {
+  final _MainMenuPageState state;
+  const _MainMenuPageView(this.state);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +70,7 @@ class MainMenuPage extends StatelessWidget {
             ),
             toolbarHeight: 60,
             title: const Padding(
-              padding: EdgeInsets.only(left: 22),
+              padding: EdgeInsets.only(left: 24),
               child: Text('INICIO'),
             ),
             automaticallyImplyLeading: false,
@@ -40,13 +91,11 @@ class MainMenuPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: SizedBox(
-                        height: 200,
-                        width: 200,
+                        height: state._cardSideSize,
+                        width: state._cardSideSize,
                         child: InkWell(
                           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          onTap: () {
-                            context.pushNamed(kAsociadosPageRoute);
-                          },
+                          onTap: state._goToAsociados,
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -68,17 +117,15 @@ class MainMenuPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 50),
+                    SizedBox(width: state._spacing),
                     Card(
                       color: StyleConst.kcolorCard,
                       child: SizedBox(
-                        height: 200,
-                        width: 200,
+                        height: state._cardSideSize,
+                        width: state._cardSideSize,
                         child: InkWell(
                           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          onTap: () {
-                            context.pushNamed(kLlavesPageRoute);
-                          },
+                          onTap: state._goToLlaves,
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -102,20 +149,18 @@ class MainMenuPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 50),
+                SizedBox(height: state._spacing),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Card(
                       color: StyleConst.kcolorCard,
                       child: SizedBox(
-                        height: 200,
-                        width: 200,
+                        height: state._cardSideSize,
+                        width: state._cardSideSize,
                         child: InkWell(
                           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          onTap: () {
-                            context.pushNamed(kBitacoraPageRoute);
-                          },
+                          onTap: state._goToBitacora,
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -137,17 +182,15 @@ class MainMenuPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 50),
+                    SizedBox(width: state._spacing),
                     Card(
                       color: StyleConst.kcolorCard,
                       child: SizedBox(
-                        height: 200,
-                        width: 200,
+                        height: state._cardSideSize,
+                        width: state._cardSideSize,
                         child: InkWell(
                           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          onTap: () {
-                            context.pushNamed(kExportarPageRoute);
-                          },
+                          onTap: state._goToExportar,
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -173,7 +216,7 @@ class MainMenuPage extends StatelessWidget {
                 ),
               ],
             ),
-          )),
+          ),),
     );
   }
 }

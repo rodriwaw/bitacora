@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'core/router_config.dart';
 import 'core/theme.dart';
+import 'core/utils/injections.dart';
 
-void main() {
+void main() async {
   // ensure initialized
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(const MainApp()));
+  // Inject all dependencies
+  await initInjections();
+  // Run the app
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
