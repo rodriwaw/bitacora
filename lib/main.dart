@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'core/router_config.dart';
 import 'core/theme.dart';
 import 'core/utils/injections.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   // ensure initialized
@@ -23,6 +24,15 @@ class MainApp extends StatelessWidget {
       routerConfig: routerConfig,
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
+      locale: const Locale('es', 'MX'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'MX'),
+      ],
     );
   }
 }

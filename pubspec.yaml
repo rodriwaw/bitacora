@@ -18,6 +18,11 @@ dependencies:
   http: ^1.2.2
   path: ^1.9.0
   sqflite: ^2.4.0
+  flutter_native_splash: ^2.4.2
+  flutter_launcher_icons: ^0.14.1
+  intl: ^0.19.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -32,8 +37,27 @@ flutter:
   assets:
     - assets/
     - assets/bitacora.db
+    - assets/logo.png
 
   fonts:
     - family: Baloo 2
       fonts:
         - asset: fonts/Baloo2-variable.ttf
+
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#f5f5f5"
+  image: assets/logo.png
+  android_12:
+    image: assets/logo.png
+    color: "#f5f5f5"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/logo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_foreground: "assets/logo.png"
+  adaptive_icon_background: "#f5f5f5"

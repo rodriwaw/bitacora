@@ -7,16 +7,16 @@ class ExportarPage extends StatefulWidget {
   const ExportarPage({super.key});
 
   @override
-  _ExportarPageState createState() => _ExportarPageState();
+  ExportarPageState createState() => ExportarPageState();
 }
 
-class _ExportarPageState extends State<ExportarPage> {
+class ExportarPageState extends State<ExportarPage> {
   @override
   Widget build(BuildContext context) => _ExportarPageView(this);
 }
 
 class _ExportarPageView extends StatelessWidget {
-  final _ExportarPageState state;
+  final ExportarPageState state;
 
   const _ExportarPageView(this.state);
 

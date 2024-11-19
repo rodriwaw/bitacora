@@ -9,12 +9,37 @@ class GetAsociadosEvent extends AsociadosEvent {
   const GetAsociadosEvent({this.loading = true});
 }
 
-class GetAsociadoEvent extends AsociadosEvent {
-  final int id;
-  const GetAsociadoEvent(this.id);
+class GetAsociadosConLlaveDispEvent extends AsociadosEvent {
+  final bool loading;
+  const GetAsociadosConLlaveDispEvent({this.loading = true});
+}
+
+class GetAsociadosConLlavePresEvent extends AsociadosEvent {
+  final bool loading;
+  const GetAsociadosConLlavePresEvent({this.loading = true});
+}
+
+class GetAsociadoByNumEvent extends AsociadosEvent {
+  final bool loading;
+  final String numAsociado;
+  const GetAsociadoByNumEvent(this.numAsociado, {this.loading = true});
 }
 
 class AddAsociadoEvent extends AsociadosEvent {
+  final bool loading;
   final AsociadosModel asociado;
-  const AddAsociadoEvent(this.asociado);
+  const AddAsociadoEvent(this.asociado, {this.loading = true});
+}
+
+class UpdateAsociadoEvent extends AsociadosEvent {
+  final bool loading;
+  final AsociadosModel asociado;
+  const UpdateAsociadoEvent(this.asociado, {this.loading = true});
+}
+
+class DeleteAsociadoEvent extends AsociadosEvent {
+  final bool loading;
+
+  final AsociadosModel asociado;
+  const DeleteAsociadoEvent(this.asociado, {this.loading = true});
 }

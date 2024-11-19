@@ -41,7 +41,7 @@ class DBCreator {
     } else {
       print("Opening existing database");
     }
-    var db = await openDatabase(path, readOnly: true);
+    var db = await openDatabase(path, readOnly: false);
     component.database = db;
     return component;
   }

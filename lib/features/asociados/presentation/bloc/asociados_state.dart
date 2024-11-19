@@ -21,14 +21,36 @@ class AsociadosLoaded extends AsociadosState {
   AsociadosLoaded(this.asociados);
 }
 
-//para el modal de detalle
-class AsociadoEditModal extends AsociadosState {
-  final AsociadosModel asociado;
-  AsociadoEditModal(this.asociado);
+class AsociadosConLlaveLoaded extends AsociadosState {
+  final List<AsociadosConLlaveModel> asociados;
+  AsociadosConLlaveLoaded(this.asociados);
 }
 
 //asociado creado
 class AsociadosCreated extends AsociadosState {
   final ApiResponse response;
   AsociadosCreated(this.response);
+}
+
+//asociado cargado
+class AsociadoLoaded extends AsociadosState {
+  final AsociadosModel asociado;
+  AsociadoLoaded(this.asociado);
+}
+
+class AsociadoConLlaveLoaded extends AsociadosState {
+  final AsociadosConLlaveModel asociado;
+  AsociadoConLlaveLoaded(this.asociado);
+}
+
+//asociado actualizado
+class AsociadosUpdated extends AsociadosState {
+  final ApiResponse response;
+  AsociadosUpdated(this.response);
+}
+
+//asociado eliminado
+class AsociadosDeleted extends AsociadosState {
+  final ApiResponse response;
+  AsociadosDeleted(this.response);
 }

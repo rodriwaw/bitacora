@@ -1,5 +1,4 @@
 import 'package:bitacora/features/asociados/domain/asociados_usecase.dart';
-import 'package:bitacora/features/asociados/presentation/bloc/asociados_bloc.dart';
 import 'package:bitacora/shared/presentation/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/style_const.dart';
 import '../../../../core/utils/injections.dart';
 import '../../domain/asociados_model.dart';
-import 'asociado_modal_page.dart';
+import '../bloc/asociados_bloc.dart';
+import 'asociado_add_modal.dart';
+import 'asociado_edit_modal.dart';
 
 class AsociadosPage extends StatefulWidget {
   const AsociadosPage({super.key});
@@ -17,16 +18,17 @@ class AsociadosPage extends StatefulWidget {
 }
 
 class AsociadosPageController extends State<AsociadosPage> {
-  final AsociadosBloc _asociadosBloc =
-      AsociadosBloc(asociadoUseCase: sl<GetAsociadosUseCase>(), createAsociadoUseCase: sl<CreateAsociadoUseCase>());
+  final AsociadosBloc _asociadosBloc = AsociadosBloc(
+    getAsociadosUseCase: sl<GetAsociadosUseCase>(),
+    createAsociadoUseCase: sl<CreateAsociadoUseCase>(),
+    // getAsociadoUseCase: sl<GetAsociadoUseCase>(),
+  );
   double get _height => MediaQuery.of(context).size.height - 84; // appbar y padding
   late double _width;
   bool _isLandScape = false;
 
   late double _cardSideSize;
   int _itemsPerRow = 8;
-
-  final List<AsociadosModel> _asociados = [];
 
   @override
   void initState() {
@@ -57,18 +59,37 @@ class AsociadosPageController extends State<AsociadosPage> {
       _itemsPerRow = 8;
     } else {
       _cardSideSize = _width * (1 / 4);
-      _itemsPerRow = 4;
+      _itemsPerRow = 5;
     }
   }
 
-  void _addAsociado() {
-    showDialog(
+  void _addAsociado() async {
+    bool reload = await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return const AsociadoAddModal();
+          },
+        ) ??
+        false;
+    if (reload) {
+      _getAsociados();
+    }
+  }
+
+  void _editAsociado(AsociadosModel asociado) async {
+    bool reload = await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return AsociadoModalPage();
+        return AsociadoEditModal(
+          asociado: asociado,
+        );
       },
     );
+    if (reload) {
+      _getAsociados();
+    }
   }
 
   //llama al evento GetAsociadosEvent
@@ -118,7 +139,7 @@ class _AsociadosPageView extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: controller._addAsociado,
                             label: const Text(
-                              'Agregar Asociado',
+                              'AGREGAR',
                               style: TextStyle(
                                 color: StyleConst.kcolorBlanco,
                                 fontSize: 22,
@@ -131,7 +152,7 @@ class _AsociadosPageView extends StatelessWidget {
                               color: StyleConst.kcolorBlanco,
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: StyleConst.kcolorVerdeAdd,
+                              backgroundColor: StyleConst.kcolorVerde,
                               iconColor: StyleConst.kcolorBlanco,
                               padding: const EdgeInsets.symmetric(
                                 vertical: 12,
@@ -148,17 +169,10 @@ class _AsociadosPageView extends StatelessWidget {
 
                       //Cards de Asociados
                       //uso de bloc para cargar los asociados
-                      BlocConsumer<AsociadosBloc, AsociadosState>(
+                      BlocBuilder<AsociadosBloc, AsociadosState>(
                         bloc: controller._asociadosBloc,
                         // listener escucha los eventos y realiza acciones si hay cambios
-                        listener: (context, state) {
-                          if (state is AsociadosLoaded) {
-                            //limpiar la lista de asociados
-                            controller._asociados.clear();
-                            //agregar los asociados a la lista
-                            controller._asociados.addAll(state.asociados);
-                          }
-                        },
+
                         builder: (context, state) {
                           if (state is AsociadosLoading) {
                             return const Expanded(
@@ -174,77 +188,84 @@ class _AsociadosPageView extends StatelessWidget {
                                 child: Text(state.message),
                               ),
                             );
-                          }
-                          if (controller._asociados.isEmpty) {
-                            return const Flexible(
-                              child: Center(
-                                child: Text(
-                                  'No hay asociados',
-                                  style: TextStyle(
-                                    color: StyleConst.kcolorCafeOscuro,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900,
+                          } else if (state is AsociadosLoaded) {
+                            if (state.asociados.isEmpty) {
+                              return const Flexible(
+                                child: Center(
+                                  child: Text(
+                                    'No hay asociados',
+                                    style: TextStyle(
+                                      color: StyleConst.kcolorCafeOscuro,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }
-                          return Flexible(
-                            child: GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: controller._itemsPerRow,
-                                mainAxisSpacing: 12,
-                                crossAxisSpacing: 12,
-                              ),
-                              itemBuilder: (context, index) {
-                                if (index >= controller._asociados.length) {
-                                  return null;
-                                }
-                                final asociado = controller._asociados[index];
+                              );
+                            }
+                            return Flexible(
+                              child: GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: controller._itemsPerRow,
+                                  mainAxisSpacing: 12,
+                                  crossAxisSpacing: 12,
+                                ),
+                                itemBuilder: (context, index) {
+                                  if (index >= state.asociados.length) {
+                                    return null;
+                                  }
+                                  final asociado = state.asociados[index];
 
-                                return Card(
-                                  color: StyleConst.kcolorCard,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  child: SizedBox(
-                                    height: controller._cardSideSize,
-                                    width: controller._cardSideSize,
-                                    child: InkWell(
-                                      borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                                      onTap: () {
-                                        //    context.pushNamed(kAsociadosPageRoute);
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                              Icons.people_alt_rounded,
-                                              size: 80,
-                                              color: StyleConst.kcolorCafe,
-                                            ),
-                                            Text(
-                                              asociado.nombre,
-                                              style: const TextStyle(
-                                                color: StyleConst.kcolorCafeOscuro,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w900,
+                                  return Card(
+                                    color: StyleConst.kcolorCard,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: SizedBox(
+                                      height: controller._cardSideSize,
+                                      width: controller._cardSideSize,
+                                      child: InkWell(
+                                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                        onTap: () {
+                                          controller._editAsociado(asociado);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              const Icon(
+                                                Icons.people_alt_rounded,
+                                                size: 72,
+                                                color: StyleConst.kcolorCafe,
                                               ),
-                                            ),
-                                          ],
+                                              Text(
+                                                '${asociado.nombre} ${asociado.apellidoPaterno} ',
+                                                style: const TextStyle(
+                                                  color: StyleConst.kcolorCafe,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w900,
+                                                  height: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                maxLines: 2,
+                                                softWrap: true,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                          return const SizedBox();
                         },
                       )
                     ],

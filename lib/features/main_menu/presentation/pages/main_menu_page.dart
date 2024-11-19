@@ -107,7 +107,7 @@ class _MainMenuPageView extends StatelessWidget {
                               Text(
                                 'ASOCIADOS',
                                 style: TextStyle(
-                                  color: StyleConst.kcolorCafeOscuro,
+                                  color: StyleConst.kcolorCafe,
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -137,7 +137,7 @@ class _MainMenuPageView extends StatelessWidget {
                               Text(
                                 'LLAVES',
                                 style: TextStyle(
-                                  color: StyleConst.kcolorCafeOscuro,
+                                  color: StyleConst.kcolorCafe,
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -172,7 +172,7 @@ class _MainMenuPageView extends StatelessWidget {
                               Text(
                                 'BITÁCORA',
                                 style: TextStyle(
-                                  color: StyleConst.kcolorCafeOscuro,
+                                  color: StyleConst.kcolorCafe,
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -202,7 +202,7 @@ class _MainMenuPageView extends StatelessWidget {
                               Text(
                                 'EXPORTAR',
                                 style: TextStyle(
-                                  color: StyleConst.kcolorCafeOscuro,
+                                  color: StyleConst.kcolorCafe,
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
                                 ),

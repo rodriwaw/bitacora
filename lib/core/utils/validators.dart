@@ -31,4 +31,12 @@ class Validators {
 
     return null;
   }
+
+  static String? requiredDropdown(Object? value) {
+    if (value == null) {
+      return 'Campo requerido';
+    }
+
+    return null;
+  }
 }
