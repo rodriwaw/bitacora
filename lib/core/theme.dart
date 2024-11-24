@@ -1,4 +1,3 @@
-import 'package:bitacora/core/style_const.dart';
 import 'package:flutter/material.dart';
 
 final themeData = ThemeData(

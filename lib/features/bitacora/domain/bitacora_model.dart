@@ -9,6 +9,7 @@ class BitacoraModel {
   int idLlave;
   String? numLlave;
   int estatus;
+  String? fechaEliminado;
 
   BitacoraModel({
     this.id,
@@ -19,6 +20,7 @@ class BitacoraModel {
     required this.estatus,
     this.asociado,
     this.numLlave,
+    this.fechaEliminado,
   });
 
   factory BitacoraModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class BitacoraModel {
       estatus: json['estatus'],
       numLlave: json['num_llave'],
       asociado: json['asociado'],
+      fechaEliminado: json['fecha_eliminado'],
     );
   }
 
@@ -42,6 +45,7 @@ class BitacoraModel {
       'id_asociado': idAsociado,
       'id_llave': idLlave,
       'estatus': estatus,
+      'fecha_eliminado': fechaEliminado,
     };
   }
 

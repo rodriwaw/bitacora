@@ -96,16 +96,20 @@ class AsociadosApiImpl extends AbstractAsociadosApi {
       Database db = sl.get<DBCreator>().database;
       List<Map<String, dynamic>> asociado = await db.rawQuery(
           '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
-          L.num_llave, L.id AS id_llave, D.nombre AS departamento
+          L.num_llave, L.id AS id_llave, D.nombre AS departamento, L.estatus AS estatus_llave
           FROM asociados as A
           INNER JOIN 
           llaves as L 
           ON A.id = L.asignada_a
           JOIN departamentos as D
           ON A.id_departamento = D.id
-          WHERE A.estatus = 1 AND L.estatus = 3 AND A.num_asociado = $numAsociado;''');
+          WHERE A.estatus = 1  AND A.num_asociado = $numAsociado;''');
+      // AND L.estatus = 3
       if (asociado.isEmpty) {
-        throw ('El asociado con el número $numAsociado no existe o su llave no ha sido prestada');
+        throw ('El asociado con el número $numAsociado no existe');
+      }
+      if (asociado.first['estatus_llave'] != 3) {
+        throw ('La llave ${asociado.first['num_llave']} no ha sido prestada');
       }
       return AsociadosConLlaveModel.fromJson(asociado.first);
     } catch (e) {
@@ -145,9 +149,15 @@ class AsociadosApiImpl extends AbstractAsociadosApi {
   Future<ApiResponse> deleteAsociado(AsociadosModel asociado) async {
     try {
       Database db = sl.get<DBCreator>().database;
+      //remove llave from asociado
+      var dbExecResult = await db.update('llaves', {'estatus': 1, 'asignada_a': null},
+          where: 'asignada_a = ?', whereArgs: [asociado.id]);
+      if (dbExecResult == 0) {
+        return Failure(false, 'No se pudo eliminar la llave del asociado');
+      }
       asociado.estatus = 0; //cambiar el estatus a 0
       asociado.fechaBaja = DateTime.now().toString(); //agregar la fecha de baja
-      var dbExecResult = await db.update('asociados', asociado.toJson(), where: 'id = ?', whereArgs: [asociado.id]);
+      dbExecResult = await db.update('asociados', asociado.toJson(), where: 'id = ?', whereArgs: [asociado.id]);
       if (dbExecResult == 1) {
         return Success(true, 'Asociado eliminado correctamente');
       }

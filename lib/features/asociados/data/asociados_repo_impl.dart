@@ -76,7 +76,7 @@ class AsociadosRepositoryImpl extends AbstractAsociadosRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }
@@ -94,7 +94,7 @@ class AsociadosRepositoryImpl extends AbstractAsociadosRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }
@@ -113,7 +113,7 @@ class AsociadosRepositoryImpl extends AbstractAsociadosRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }

@@ -42,7 +42,7 @@ class LlavesRepositoryImpl extends AbstractLlavesRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }
@@ -60,7 +60,7 @@ class LlavesRepositoryImpl extends AbstractLlavesRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }
@@ -78,7 +78,7 @@ class LlavesRepositoryImpl extends AbstractLlavesRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }

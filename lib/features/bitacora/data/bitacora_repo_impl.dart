@@ -32,7 +32,7 @@ class BitacoraRepositoryImpl extends AbstractBitacoraRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }
@@ -51,7 +51,7 @@ class BitacoraRepositoryImpl extends AbstractBitacoraRepository {
           ),
         );
       }
-      throw Exception(response.message);
+      throw response.message;
     } catch (e) {
       return Left(Failure(false, e.toString()));
     }

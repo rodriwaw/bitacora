@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
-import '../../../../shared/presentation/ifta_label_dropdown.dart';
 import '../../../asociados/presentation/bloc/asociados_bloc.dart';
 import '../../domain/bitacora_usecase.dart';
 import '../bloc/bitacora_bloc.dart';

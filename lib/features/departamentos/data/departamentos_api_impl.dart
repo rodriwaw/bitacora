@@ -31,7 +31,7 @@ class DepartamentosApiImpl extends AbstractDepartamentosApi {
       /* await Future.delayed(Duration(seconds: 2));
       return []; */
     } catch (e) {
-      throw Exception(e.toString());
+      throw e.toString();
     }
   }
 }

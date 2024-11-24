@@ -1,3 +1,4 @@
+import 'package:bitacora/features/llaves/domain/llaves_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../core/utils/api_response.dart';
@@ -55,7 +56,7 @@ class BitacoraApiImpl extends AbstractBitacoraApi {
         if (dbExecResult == 0) {
           return Failure(false, 'No se pudo actualizar el estatus de la llave');
         }
-      }else if (bitacora.movimiento.toLowerCase() == 'entrada') {
+      } else if (bitacora.movimiento.toLowerCase() == 'entrada') {
         var llave = await db.query('llaves', where: 'id = ?', whereArgs: [bitacora.idLlave]);
         if (llave.isEmpty) {
           return Failure(false, 'No se encontró la llave con el id proporcionado');
@@ -89,7 +90,46 @@ class BitacoraApiImpl extends AbstractBitacoraApi {
   Future<ApiResponse> deleteBitacora(BitacoraModel bitacora) async {
     try {
       Database db = sl.get<DBCreator>().database;
-      var dbExecResult = await db.delete('bitacora', where: 'id = ?', whereArgs: [bitacora.id]);
+      // get all bitacora records for llave
+      List<Map<String, dynamic>> bitacorasRaw = await db.rawQuery(
+          '''SELECT B.*, CONCAT(A.nombre, ' ', A.apellido_paterno, ' ', A.apellido_materno) AS asociado, L.num_llave
+        FROM bitacora AS B
+        LEFT JOIN asociados AS A
+        ON B.id_asociado = A.id
+        LEFT JOIN llaves AS L
+        ON B.id_llave = L.id
+        WHERE B.estatus = 1 AND B.id_llave = ${bitacora.idLlave}	
+        ORDER BY B.fecha DESC
+        ''');
+      List<BitacoraModel> bitacoraRegistros = BitacoraModel.fromMapList(bitacorasRaw);
+      //get most recent bitacora record
+      BitacoraModel bitacoraReciente = bitacoraRegistros.first;
+      print(bitacoraReciente.toJson());
+      //check if the bitacora record to be deleted is the most recent
+      if (bitacoraReciente.id == bitacora.id) {
+        //get llave 
+        var llaveRaw = await db.query('llaves', where: 'id = ?', whereArgs: [bitacora.idLlave]);
+        if (llaveRaw.isEmpty) {
+          return Failure(false, 'No se encontró la llave con el id proporcionado');
+        }
+        var llave = LlavesModel.fromJson(llaveRaw.first);
+        //return llave to past status
+        // 3 = prestada 2 = disponible
+        if (llave.estatus == 3) {
+          var dbExecResult = await db.update('llaves', {'estatus': 2}, where: 'id = ?', whereArgs: [bitacora.idLlave]);
+          if (dbExecResult == 0) {
+            return Failure(false, 'No se pudo actualizar el estatus de la llave');
+          }
+        }else if (llave.estatus == 2) {
+          var dbExecResult = await db.update('llaves', {'estatus': 3}, where: 'id = ?', whereArgs: [bitacora.idLlave]);
+          if (dbExecResult == 0) {
+            return Failure(false, 'No se pudo actualizar el estatus de la llave');
+          }
+        }
+      }
+      bitacora.fechaEliminado = DateTime.now().toString();
+      bitacora.estatus = 0;
+      var dbExecResult = await db.update('bitacora', bitacora.toJson(), where: 'id = ?', whereArgs: [bitacora.id]);
       if (dbExecResult != 0) {
         return Success(true, 'Registro de bitácora eliminado correctamente');
       }
