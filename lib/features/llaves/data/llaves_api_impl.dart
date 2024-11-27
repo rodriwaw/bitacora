@@ -72,7 +72,7 @@ class LlavesApiImpl extends AbstractLlavesApi {
       //si se esta cambiando el asociado de la llave
       if (llaveActual.idAsociado != llave.idAsociado) {
         List<Map<String, dynamic>> asociadosConLlaveDispRaw = await db.rawQuery(
-            '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
+            '''SELECT A.id, A.num_asociado, A.nombre || " "  || A.apellido_paterno || " " || A.apellido_materno AS "nombre", 
           L.num_llave, L.id AS id_llave, D.nombre AS departamento
           FROM asociados as A
           INNER JOIN 
@@ -85,7 +85,7 @@ class LlavesApiImpl extends AbstractLlavesApi {
         List<AsociadosConLlaveModel> asociadosConLlaveDisp =
             AsociadosConLlaveModel.fromMapList(asociadosConLlaveDispRaw);
         List<Map<String, dynamic>> asociadosConLlavePresRaw = await db.rawQuery(
-            '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
+            '''SELECT A.id, A.num_asociado, A.nombre || " "  || A.apellido_paterno || " " || A.apellido_materno AS "nombre", 
           L.num_llave, L.id AS id_llave, D.nombre AS departamento
           FROM asociados as A
           INNER JOIN 

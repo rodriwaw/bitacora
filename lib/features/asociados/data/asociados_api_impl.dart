@@ -33,7 +33,7 @@ class AsociadosApiImpl extends AbstractAsociadosApi {
     try {
       Database db = sl.get<DBCreator>().database;
       List<Map<String, dynamic>> asociados = await db.rawQuery(
-          '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
+          '''SELECT A.id, A.num_asociado, (A.nombre + ' ' + A.apellido_paterno + ' ' + A.apellido_materno) AS nombre, 
           L.num_llave, L.id AS id_llave, D.nombre AS departamento
           FROM asociados as A
           INNER JOIN 
@@ -53,7 +53,7 @@ class AsociadosApiImpl extends AbstractAsociadosApi {
     try {
       Database db = sl.get<DBCreator>().database;
       List<Map<String, dynamic>> asociados = await db.rawQuery(
-          '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
+          '''SELECT A.id, A.num_asociado, (A.nombre + ' ' + A.apellido_paterno + ' ' + A.apellido_materno) AS nombre, 
           L.num_llave, L.id AS id_llave, D.nombre AS departamento
           FROM asociados as A
           INNER JOIN 
@@ -95,7 +95,7 @@ class AsociadosApiImpl extends AbstractAsociadosApi {
     try {
       Database db = sl.get<DBCreator>().database;
       List<Map<String, dynamic>> asociado = await db.rawQuery(
-          '''SELECT A.id, A.num_asociado, CONCAT(A.nombre,' ', A.apellido_paterno,' ', A.apellido_materno) AS nombre, 
+          '''SELECT A.id, A.num_asociado, (A.nombre + ' ' + A.apellido_paterno + ' ' + A.apellido_materno) AS nombre, 
           L.num_llave, L.id AS id_llave, D.nombre AS departamento, L.estatus AS estatus_llave
           FROM asociados as A
           INNER JOIN 

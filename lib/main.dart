@@ -3,10 +3,12 @@ import 'core/router_config.dart';
 import 'core/theme.dart';
 import 'core/utils/injections.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:flutter/services.dart';
 void main() async {
   // ensure initialized
   WidgetsFlutterBinding.ensureInitialized();
+  //lock device orientation
+   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
   // Inject all dependencies
   await initInjections();
   // Run the app
@@ -36,3 +38,4 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
