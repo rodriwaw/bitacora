@@ -25,7 +25,7 @@ class AsociadosBloc extends Bloc<AsociadosEvent, AsociadosState> {
     this.getAsociadoByNumUseCase,
     this.updateAsociadoUseCase,
     this.deleteAsociadoUseCase,
-  }) : super(AsociadosLoading()) {
+  }) : super(AsociadosInitial()) {
     on<GetAsociadosEvent>(_getAsociados);
     on<GetAsociadosConLlaveDispEvent>(_getAsociadosConLlaveDisponible);
     on<GetAsociadosConLlavePresEvent>(_getAsociadosConLlavePrestada);

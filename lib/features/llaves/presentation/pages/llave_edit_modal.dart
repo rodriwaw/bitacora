@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../shared/presentation/confirm_alert.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../../asociados/domain/asociados_usecase.dart';
 import '../../domain/llaves_model.dart';
 import '../../domain/llaves_usecase.dart';
@@ -40,7 +41,8 @@ class LlaveEditModalController extends State<LlaveEditModal> {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _LlaveEditModalView(this, constraints),
+        builder: (context, constraints) =>
+            _LlaveEditModalView(this, constraints),
       );
 
   @override
@@ -152,9 +154,12 @@ class _LlaveEditModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Número de Llave',
-                                    controller: controller._numeroLlaveController,
+                                    controller:
+                                        controller._numeroLlaveController,
                                     validators: Validators.required,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                 ],
                               ),
@@ -166,7 +171,8 @@ class _LlaveEditModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Descripción de la Llave',
-                                    controller: controller._descripcionController,
+                                    controller:
+                                        controller._descripcionController,
                                     validators: Validators.required,
                                   ),
                                 ],
@@ -181,21 +187,25 @@ class _LlaveEditModalView extends StatelessWidget {
                                     bloc: controller._asociadosBloc,
                                     builder: (context, state) {
                                       if (state is AsociadosLoaded) {
-                                        List<AsociadosConLlaveModel> asociados = state.asociados
-                                            .map(
-                                              (e) => AsociadosConLlaveModel(
-                                                id: e.id!,
-                                                nombre: '${e.nombre} ${e.apellidoPaterno} ${e.apellidoMaterno}',
-                                              ),
-                                            )
-                                            .toList();
+                                        List<AsociadosConLlaveModel> asociados =
+                                            state.asociados
+                                                .map(
+                                                  (e) => AsociadosConLlaveModel(
+                                                    id: e.id!,
+                                                    nombre:
+                                                        '${e.nombre} ${e.apellidoPaterno} ${e.apellidoMaterno}',
+                                                  ),
+                                                )
+                                                .toList();
 
                                         return IftaLabelDropdownButton(
                                           label: 'Asignada a',
                                           items: asociados,
-                                          selected: int.tryParse(controller._asociadoController.text),
+                                          selected: int.tryParse(controller
+                                              ._asociadoController.text),
                                           onChanged: (value) {
-                                            controller._asociadoController.text = value.toString();
+                                            controller._asociadoController
+                                                .text = value.toString();
                                           },
                                         );
                                       }
@@ -206,7 +216,8 @@ class _LlaveEditModalView extends StatelessWidget {
                                     },
                                     listener: (context, state) {
                                       if (state is AsociadosError) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(state.message),
                                           ),
@@ -273,55 +284,49 @@ class _LlaveEditModalView extends StatelessWidget {
         BlocConsumer(
           bloc: controller._llavesBloc,
           builder: (context, state) {
+            if (state is LlavesLoading) {
+              return const LoadingOverlay();
+            }
             return const SizedBox();
           },
           listener: (context, state) {
             if (state is LlavesError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: StyleConst.kcolorRojo,
-                ),
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: StyleConst.kcolorRojo,
+                    ),
+                  );
+                }
+              });
             }
             if (state is LlavesUpdated) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
             if (state is LlavesDeleted) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
-            }
-            if (state is LlavesLoading) {
-              const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
           },
         ),

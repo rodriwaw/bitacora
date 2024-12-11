@@ -18,7 +18,7 @@ class BitacoraBloc extends Bloc<BitacoraEvent, BitacoraState>{
     this.getBitacoraUseCase,
     this.createBitacoraUseCase,
     this.deleteBitacoraUseCase,
-  }) : super(BitacoraLoading()){
+  }) : super(BitacoraInitial()){
     on<GetBitacoraEvent>(_getBitacora);
     on<AddBitacoraEvent>(_createBitacora);
     on<DeleteBitacoraEvent>(_deleteBitacora);

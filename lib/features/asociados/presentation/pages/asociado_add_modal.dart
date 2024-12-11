@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../shared/presentation/ifta_label_dropdown.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../../departamentos/presentation/bloc/departamentos_bloc.dart';
 import '../../domain/asociados_usecase.dart';
 import '../bloc/asociados_bloc.dart';
@@ -22,17 +23,22 @@ class AsociadoAddModal extends StatefulWidget {
 class AsociadoAddModalController extends State<AsociadoAddModal> {
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _departamentoController = TextEditingController();
-  final TextEditingController _numeroAsociadoController = TextEditingController();
-  final TextEditingController _apellidoPaternoController = TextEditingController();
-  final TextEditingController _apellidoMaternoController = TextEditingController();
+  final TextEditingController _numeroAsociadoController =
+      TextEditingController();
+  final TextEditingController _apellidoPaternoController =
+      TextEditingController();
+  final TextEditingController _apellidoMaternoController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final AsociadosBloc _asociadosBloc = AsociadosBloc(createAsociadoUseCase: sl<CreateAsociadoUseCase>());
+  final AsociadosBloc _asociadosBloc =
+      AsociadosBloc(createAsociadoUseCase: sl<CreateAsociadoUseCase>());
   final DepartamentosBloc _departamentosBloc =
       DepartamentosBloc(getDepartamentosUseCase: sl<GetDepartamentosUseCase>());
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _AsociadoAddModalView(this, constraints),
+        builder: (context, constraints) =>
+            _AsociadoAddModalView(this, constraints),
       );
 
   @override
@@ -131,7 +137,8 @@ class _AsociadoAddModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Apellido Paterno',
-                                    controller: controller._apellidoPaternoController,
+                                    controller:
+                                        controller._apellidoPaternoController,
                                     validators: Validators.required,
                                   ),
                                 ],
@@ -144,7 +151,8 @@ class _AsociadoAddModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Apellido Materno',
-                                    controller: controller._apellidoMaternoController,
+                                    controller:
+                                        controller._apellidoMaternoController,
                                   ),
                                 ],
                               ),
@@ -163,9 +171,12 @@ class _AsociadoAddModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Número de Asociado',
-                                    controller: controller._numeroAsociadoController,
+                                    controller:
+                                        controller._numeroAsociadoController,
                                     validators: Validators.required,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                 ],
                               ),
@@ -183,9 +194,11 @@ class _AsociadoAddModalView extends StatelessWidget {
                                           label: 'Departamento',
                                           items: state.departamentos,
                                           onChanged: (value) {
-                                            controller._departamentoController.text = value.toString();
+                                            controller._departamentoController
+                                                .text = value.toString();
                                           },
-                                          validator: Validators.requiredDropdown,
+                                          validator:
+                                              Validators.requiredDropdown,
                                         );
                                       }
                                       if (state is DepartamentosError) {
@@ -195,7 +208,8 @@ class _AsociadoAddModalView extends StatelessWidget {
                                     },
                                     listener: (context, state) {
                                       if (state is DepartamentosError) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(state.message),
                                           ),
@@ -258,41 +272,37 @@ class _AsociadoAddModalView extends StatelessWidget {
         ),
         BlocConsumer(
           bloc: controller._asociadosBloc,
-          builder: (context, state) {
-            return const SizedBox();
-          },
           listener: (context, state) {
             if (state is AsociadosError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: StyleConst.kcolorRojo,
-                ),
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: StyleConst.kcolorRojo,
+                    ),
+                  );
+                }
+              });
+            } else if (state is AsociadosCreated) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
-            if (state is AsociadosCreated) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
-            }
+          },
+          builder: (context, state) {
             if (state is AsociadosLoading) {
-              const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return const LoadingOverlay();
             }
+            return const SizedBox();
           },
         ),
       ],

@@ -28,18 +28,17 @@ class GetAsociadoByNumEvent extends AsociadosEvent {
 class AddAsociadoEvent extends AsociadosEvent {
   final bool loading;
   final AsociadosModel asociado;
-  const AddAsociadoEvent(this.asociado, {this.loading = true});
+  const AddAsociadoEvent(this.asociado, {this.loading = false});
 }
 
 class UpdateAsociadoEvent extends AsociadosEvent {
   final bool loading;
   final AsociadosModel asociado;
-  const UpdateAsociadoEvent(this.asociado, {this.loading = true});
+  const UpdateAsociadoEvent(this.asociado, {this.loading = false});
 }
 
 class DeleteAsociadoEvent extends AsociadosEvent {
   final bool loading;
-
   final AsociadosModel asociado;
-  const DeleteAsociadoEvent(this.asociado, {this.loading = true});
+  const DeleteAsociadoEvent(this.asociado, {this.loading = false});
 }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/style_const.dart';
 import '../../../../core/utils/injections.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../domain/asociados_model.dart';
 import '../bloc/asociados_bloc.dart';
 import 'asociado_add_modal.dart';
@@ -23,7 +24,8 @@ class AsociadosPageController extends State<AsociadosPage> {
     createAsociadoUseCase: sl<CreateAsociadoUseCase>(),
     // getAsociadoUseCase: sl<GetAsociadoUseCase>(),
   );
-  double get _height => MediaQuery.of(context).size.height - 84; // appbar y padding
+  double get _height =>
+      MediaQuery.of(context).size.height - 84; // appbar y padding
   late double _width;
   bool _isLandScape = false;
 
@@ -35,7 +37,8 @@ class AsociadosPageController extends State<AsociadosPage> {
     super.initState();
     _getAsociados();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _isLandScape = MediaQuery.of(context).orientation == Orientation.landscape;
+      _isLandScape =
+          MediaQuery.of(context).orientation == Orientation.landscape;
       _width = MediaQuery.of(context).size.width;
 
       _setSizes();
@@ -78,7 +81,7 @@ class AsociadosPageController extends State<AsociadosPage> {
   }
 
   void _editAsociado(AsociadosModel asociado) async {
-    bool reload = await showDialog(
+    bool? reload = await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
@@ -86,7 +89,7 @@ class AsociadosPageController extends State<AsociadosPage> {
           asociado: asociado,
         );
       },
-    );
+    ) ?? false;
     if (reload) {
       _getAsociados();
     }
@@ -175,13 +178,7 @@ class _AsociadosPageView extends StatelessWidget {
 
                         builder: (context, state) {
                           if (state is AsociadosLoading) {
-                            return const Expanded(
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: StyleConst.kcolorCafeOscuro,
-                                ),
-                              ),
-                            );
+                            return const SizedBox();
                           } else if (state is AsociadosError) {
                             return Flexible(
                               child: Center(
@@ -208,7 +205,8 @@ class _AsociadosPageView extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: controller._itemsPerRow,
                                   mainAxisSpacing: 12,
                                   crossAxisSpacing: 12,
@@ -228,14 +226,16 @@ class _AsociadosPageView extends StatelessWidget {
                                       height: controller._cardSideSize,
                                       width: controller._cardSideSize,
                                       child: InkWell(
-                                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(15.0)),
                                         onTap: () {
                                           controller._editAsociado(asociado);
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
                                               const Icon(
                                                 Icons.people_alt_rounded,
@@ -249,7 +249,8 @@ class _AsociadosPageView extends StatelessWidget {
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.w900,
                                                   height: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 maxLines: 2,
                                                 softWrap: true,

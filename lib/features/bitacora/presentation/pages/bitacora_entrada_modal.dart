@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../../asociados/presentation/bloc/asociados_bloc.dart';
 import '../../domain/bitacora_usecase.dart';
 import '../bloc/bitacora_bloc.dart';
@@ -15,18 +16,22 @@ import '../bloc/bitacora_bloc.dart';
 class BitacoraEntradaModal extends StatefulWidget {
   const BitacoraEntradaModal({super.key});
   @override
-  BitacoraEntradaModalController createState() => BitacoraEntradaModalController();
+  BitacoraEntradaModalController createState() =>
+      BitacoraEntradaModalController();
 }
 
 class BitacoraEntradaModalController extends State<BitacoraEntradaModal> {
   final TextEditingController _numAsociadoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final BitacoraBloc _bitacoraBloc = BitacoraBloc(createBitacoraUseCase: sl<CreateBitacoraUseCase>());
-  final AsociadosBloc _asociadosBloc = AsociadosBloc(getAsociadoByNumUseCase: sl<GetAsociadoByNumUseCase>());
+  final BitacoraBloc _bitacoraBloc =
+      BitacoraBloc(createBitacoraUseCase: sl<CreateBitacoraUseCase>());
+  final AsociadosBloc _asociadosBloc =
+      AsociadosBloc(getAsociadoByNumUseCase: sl<GetAsociadoByNumUseCase>());
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _BitacoraEntradaModalView(this, constraints),
+        builder: (context, constraints) =>
+            _BitacoraEntradaModalView(this, constraints),
       );
 
   @override
@@ -123,7 +128,8 @@ class _BitacoraEntradaModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Número de Asociado',
-                                    controller: controller._numAsociadoController,
+                                    controller:
+                                        controller._numAsociadoController,
                                     validators: Validators.required,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly,
@@ -170,46 +176,37 @@ class _BitacoraEntradaModalView extends StatelessWidget {
             ),
           ),
         ),
-        BlocBuilder(
+        BlocConsumer(
           bloc: controller._bitacoraBloc,
-          builder: (context, state) {
+          listener: (context, state) {
             if (state is BitacoraError) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: StyleConst.kcolorRojo,
-                      ),
-                    );
-                  }
-                },
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: StyleConst.kcolorRojo,
+                    ),
+                  );
+                }
+              });
+            } else if (state is BitacoraCreated) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
-            if (state is BitacoraCreated) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
-            }
+          },
+          builder: (context, state) {
             if (state is BitacoraLoading) {
-              const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return const LoadingOverlay();
             }
             return const SizedBox();
           },

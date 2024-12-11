@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/style_const.dart';
 
 class ConfirmActionDialog extends StatelessWidget {
-  ConfirmActionDialog({
+  const ConfirmActionDialog({super.key, 
     required this.title,
     required this.content,
     required this.onAccept,

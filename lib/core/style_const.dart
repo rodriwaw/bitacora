@@ -12,6 +12,7 @@ class StyleConst{
   static const kcolorVerde = Color(0xFF419A39);
   static const kcolorRojo = Color(0xFFBD4848);
   static const kcolorAzul = Color(0xFF4365BA);
+  static const kcolorAmarillo = Color(0xFFE6C229);
   static const kcolorCarbon = Color(0xFF2E3A2D);
   static const kcolorDisponible = Color(0xFFDEB09B);
   static const kcolorNoDisponible = Color(0xFFBA6D49);

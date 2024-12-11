@@ -8,6 +8,7 @@ import 'package:bitacora/shared/presentation/appbar.dart';
 import '../../../../core/style_const.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../shared/presentation/dialogs.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import 'bitacora_entrada_modal.dart';
 import 'bitacora_salida_modal.dart';
 
@@ -19,7 +20,8 @@ class BitacoraPage extends StatefulWidget {
 }
 
 class BitacoraPageController extends State<BitacoraPage> {
-  double get _height => MediaQuery.of(context).size.height - 84; // appbar y padding
+  double get _height =>
+      MediaQuery.of(context).size.height - 84; // appbar y padding
   final BitacoraBloc _bitacoraBloc = BitacoraBloc(
     getBitacoraUseCase: sl<GetBitacoraUseCase>(),
     deleteBitacoraUseCase: sl<DeleteBitacoraUseCase>(),
@@ -244,35 +246,47 @@ class _BitacoraPageView extends StatelessWidget {
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15.0),
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
                                           color: StyleConst.kcolorCard,
                                         ),
                                         child: ListTile(
-                                          leading: bitacora.movimiento.toLowerCase() == 'salida'
+                                          leading: bitacora.movimiento
+                                                      .toLowerCase() ==
+                                                  'salida'
                                               ? const Icon(
                                                   Icons.arrow_forward,
-                                                  color: StyleConst.kcolorCafeOscuro,
+                                                  color: StyleConst
+                                                      .kcolorCafeOscuro,
                                                 )
                                               : const Icon(
                                                   Icons.arrow_back,
-                                                  color: StyleConst.kcolorCafeOscuro,
+                                                  color: StyleConst
+                                                      .kcolorCafeOscuro,
                                                 ),
-                                          textColor: StyleConst.kcolorCafeOscuro,
+                                          textColor:
+                                              StyleConst.kcolorCafeOscuro,
                                           title: RichText(
                                             text: TextSpan(
                                               text: '${bitacora.asociado} - ',
                                               style: const TextStyle(
-                                                color: StyleConst.kcolorCafeOscuro,
+                                                color:
+                                                    StyleConst.kcolorCafeOscuro,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                  text: DateFormat("dd 'de' MMMM 'de' yyyy hh:mm:ss a", 'es')
-                                                      .format(DateTime.parse(bitacora.fecha)),
+                                                  text: DateFormat(
+                                                          "dd 'de' MMMM 'de' yyyy hh:mm:ss a",
+                                                          'es')
+                                                      .format(DateTime.parse(
+                                                          bitacora.fecha)),
                                                   style: const TextStyle(
-                                                    fontWeight: FontWeight.normal,
-                                                    color: StyleConst.kcolorCafeOscuro,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: StyleConst
+                                                        .kcolorCafeOscuro,
                                                     fontSize: 16,
                                                   ),
                                                 ),
@@ -283,15 +297,19 @@ class _BitacoraPageView extends StatelessWidget {
                                             text: TextSpan(
                                               text: bitacora.movimiento,
                                               style: const TextStyle(
-                                                color: StyleConst.kcolorCafeOscuro,
+                                                color:
+                                                    StyleConst.kcolorCafeOscuro,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                  text: ' - Llave núm. ${bitacora.numLlave!}',
+                                                  text:
+                                                      ' - Llave núm. ${bitacora.numLlave!}',
                                                   style: const TextStyle(
-                                                    fontWeight: FontWeight.normal,
-                                                    color: StyleConst.kcolorCafeOscuro,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: StyleConst
+                                                        .kcolorCafeOscuro,
                                                   ),
                                                 ),
                                               ],
@@ -300,7 +318,8 @@ class _BitacoraPageView extends StatelessWidget {
                                           trailing: IconButton(
                                             icon: const Icon(Icons.delete),
                                             onPressed: () {
-                                              controller._deleteBitacora(bitacora);
+                                              controller
+                                                  ._deleteBitacora(bitacora);
                                             },
                                           ),
                                         ),
@@ -321,46 +340,37 @@ class _BitacoraPageView extends StatelessWidget {
               ),
             ),
           ),
-          BlocBuilder(
+          BlocConsumer(
             bloc: controller._bitacoraBloc,
-            builder: (context, state) {
+            listener: (context, state) {
               if (state is BitacoraError) {
-                Future.delayed(
-                  const Duration(milliseconds: 500),
-                  () {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.message),
-                          backgroundColor: StyleConst.kcolorRojo,
-                        ),
-                      );
-                    }
-                  },
-                );
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: StyleConst.kcolorRojo,
+                      ),
+                    );
+                  }
+                });
+              } else if (state is BitacoraDeleted) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.response.message),
+                        backgroundColor: StyleConst.kcolorVerde,
+                      ),
+                    );
+                  }
+                  controller._getBitacora();
+                });
               }
-              if (state is BitacoraDeleted) {
-                Future.delayed(
-                  const Duration(milliseconds: 500),
-                  () {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.response.message),
-                          backgroundColor: StyleConst.kcolorVerde,
-                        ),
-                      );
-                    }
-                    controller._getBitacora();
-                  },
-                );
-              }
+            },
+            builder: (context, state) {
               if (state is BitacoraLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: StyleConst.kcolorCafeOscuro,
-                  ),
-                );
+                return const LoadingOverlay();
               }
               return const SizedBox();
             },

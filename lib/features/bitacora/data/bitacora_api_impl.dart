@@ -15,7 +15,7 @@ class BitacoraApiImpl extends AbstractBitacoraApi {
     try {
       Database db = sl.get<DBCreator>().database;
       List<Map<String, dynamic>> bitacora = await db.rawQuery(
-          '''SELECT B.*, (A.nombre + ' '+ A.apellido_paterno+ ' '+ A.apellido_materno) AS asociado, L.num_llave
+          '''SELECT B.*, (A.nombre  || " "  ||  A.apellido_paterno || " "  ||  A.apellido_materno) AS asociado, L.num_llave
         FROM bitacora AS B
         LEFT JOIN asociados AS A
         ON B.id_asociado = A.id
@@ -92,7 +92,7 @@ class BitacoraApiImpl extends AbstractBitacoraApi {
       Database db = sl.get<DBCreator>().database;
       // get all bitacora records for llave
       List<Map<String, dynamic>> bitacorasRaw = await db.rawQuery(
-          '''SELECT B.*, (A.nombre + ' ' + A.apellido_paterno + ' ' + A.apellido_materno) AS asociado, L.num_llave
+          '''SELECT B.*, (A.nombre  || " "  ||  A.apellido_paterno  || " "  ||  A.apellido_materno) AS asociado, L.num_llave
         FROM bitacora AS B
         LEFT JOIN asociados AS A
         ON B.id_asociado = A.id
@@ -104,7 +104,6 @@ class BitacoraApiImpl extends AbstractBitacoraApi {
       List<BitacoraModel> bitacoraRegistros = BitacoraModel.fromMapList(bitacorasRaw);
       //get most recent bitacora record
       BitacoraModel bitacoraReciente = bitacoraRegistros.first;
-      print(bitacoraReciente.toJson());
       //check if the bitacora record to be deleted is the most recent
       if (bitacoraReciente.id == bitacora.id) {
         //get llave 

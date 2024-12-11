@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../shared/presentation/ifta_label_dropdown.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../../asociados/presentation/bloc/asociados_bloc.dart';
 import '../../domain/bitacora_usecase.dart';
 import '../bloc/bitacora_bloc.dart';
@@ -16,7 +17,8 @@ import '../bloc/bitacora_bloc.dart';
 class BitacoraSalidaModal extends StatefulWidget {
   const BitacoraSalidaModal({super.key});
   @override
-  BitacoraSalidaModalController createState() => BitacoraSalidaModalController();
+  BitacoraSalidaModalController createState() =>
+      BitacoraSalidaModalController();
 }
 
 class BitacoraSalidaModalController extends State<BitacoraSalidaModal> {
@@ -25,15 +27,18 @@ class BitacoraSalidaModalController extends State<BitacoraSalidaModal> {
   final TextEditingController _numAsociadoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final BitacoraBloc _bitacoraBloc = BitacoraBloc(createBitacoraUseCase: sl<CreateBitacoraUseCase>());
-  final AsociadosBloc _asociadosBloc = AsociadosBloc(getAsociadosConLlaveDispUseCase: sl<GetAsociadosConLlaveDispUseCase>());
+  final BitacoraBloc _bitacoraBloc =
+      BitacoraBloc(createBitacoraUseCase: sl<CreateBitacoraUseCase>());
+  final AsociadosBloc _asociadosBloc = AsociadosBloc(
+      getAsociadosConLlaveDispUseCase: sl<GetAsociadosConLlaveDispUseCase>());
 
   String? _numAsociadoSelected;
   int? _idAsociadoSelected;
   int? _idLlaveSelected;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _BitacoraSalidaModalView(this, constraints),
+        builder: (context, constraints) =>
+            _BitacoraSalidaModalView(this, constraints),
       );
 
   @override
@@ -51,7 +56,8 @@ class BitacoraSalidaModalController extends State<BitacoraSalidaModal> {
       if (_numAsociadoSelected != _numAsociadoController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('El número de asociado no coincide con el asociado seleccionado'),
+            content: Text(
+                'El número de asociado no coincide con el asociado seleccionado'),
             backgroundColor: StyleConst.kcolorRojo,
           ),
         );
@@ -133,29 +139,47 @@ class _BitacoraSalidaModalView extends StatelessWidget {
                                           items: state.asociados,
                                           onChanged: (value) {
                                             if (value == null) {
-                                              controller._llaveController.text = '';
-                                              controller._departamentoController.text = '';
-                                              controller._numAsociadoSelected = null;
-                                              controller._idAsociadoSelected = null;
-                                              controller._idLlaveSelected = null;
+                                              controller._llaveController.text =
+                                                  '';
+                                              controller._departamentoController
+                                                  .text = '';
+                                              controller._numAsociadoSelected =
+                                                  null;
+                                              controller._idAsociadoSelected =
+                                                  null;
+                                              controller._idLlaveSelected =
+                                                  null;
                                               return;
                                             }
                                             controller._llaveController.text =
-                                                state.asociados.firstWhere((element) => element.id == value).numLlave ??
+                                                state
+                                                        .asociados
+                                                        .firstWhere((element) =>
+                                                            element.id == value)
+                                                        .numLlave ??
                                                     '';
-                                            controller._departamentoController.text = state.asociados
-                                                    .firstWhere((element) => element.id == value)
+                                            controller._departamentoController
+                                                .text = state.asociados
+                                                    .firstWhere((element) =>
+                                                        element.id == value)
                                                     .departamento ??
                                                 '';
 
-                                            controller._numAsociadoSelected = state.asociados
-                                                .firstWhere((element) => element.id == value)
-                                                .numAsociado;
-                                            controller._idAsociadoSelected = value;
-                                            controller._idLlaveSelected =
-                                                state.asociados.firstWhere((element) => element.id == value).idLlave;
+                                            controller._numAsociadoSelected =
+                                                state.asociados
+                                                    .firstWhere((element) =>
+                                                        element.id == value)
+                                                    .numAsociado;
+                                            controller._idAsociadoSelected =
+                                                value;
+                                            controller._idLlaveSelected = state
+                                                .asociados
+                                                .firstWhere((element) =>
+                                                    element.id == value)
+                                                .idLlave;
                                           },
-                                          validator: Validators.requiredDropdown,
+                                          validator:
+                                              Validators.requiredDropdown,
                                         );
                                       }
                                       if (state is AsociadosError) {
@@ -165,7 +189,8 @@ class _BitacoraSalidaModalView extends StatelessWidget {
                                     },
                                     listener: (context, state) {
                                       if (state is AsociadosError) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(state.message),
                                           ),
@@ -197,7 +222,8 @@ class _BitacoraSalidaModalView extends StatelessWidget {
                                   IftaLabelInput(
                                     label: 'Departamento',
                                     readOnly: true,
-                                    controller: controller._departamentoController,
+                                    controller:
+                                        controller._departamentoController,
                                   ),
                                 ],
                               ),
@@ -215,10 +241,14 @@ class _BitacoraSalidaModalView extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IftaLabelInput(
-                                    label: 'Ingresa tu número de asociado para confirmar el registro',
-                                    controller: controller._numAsociadoController,
+                                    label:
+                                        'Ingresa tu número de asociado para confirmar el registro',
+                                    controller:
+                                        controller._numAsociadoController,
                                     validators: Validators.required,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                 ],
                               ),
@@ -261,46 +291,38 @@ class _BitacoraSalidaModalView extends StatelessWidget {
             ),
           ),
         ),
-        BlocBuilder(
+        BlocConsumer(
           bloc: controller._bitacoraBloc,
-          builder: (context, state) {
+          listener: (context, state) {
             if (state is BitacoraError) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: StyleConst.kcolorRojo,
-                      ),
-                    );
-                  }
-                },
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: StyleConst.kcolorRojo,
+                    ),
+                  );
+                }
+              });
             }
             if (state is BitacoraCreated) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
+          },
+          builder: (context, state) {
             if (state is BitacoraLoading) {
-              const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return const LoadingOverlay();
             }
             return const SizedBox();
           },

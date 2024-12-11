@@ -21,7 +21,7 @@ class LlavesBloc extends Bloc<LlavesEvent, LlavesState> {
     //  this.getLlaveUseCase,
     this.updateLlaveUseCase,
     this.deleteLlaveUseCase,
-  }) : super(LlavesLoading()) {
+  }) : super(LlavesInitial()) {
     on<GetLlavesEvent>(_getLlaves);
     on<AddLlaveEvent>(_createLlave);
     on<UpdateLlaveEvent>(_updateLlave);

@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/style_const.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../shared/presentation/appbar.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../domain/llaves_model.dart';
 import '../../domain/llaves_usecase.dart';
 import '../bloc/llaves_bloc.dart';
@@ -23,7 +23,8 @@ class LlavesPageController extends State<LlavesPage> {
     getLlavesUseCase: sl<GetLlavesUseCase>(),
     createLlaveUseCase: sl<CreateLlaveUseCase>(),
   );
-  double get _height => MediaQuery.of(context).size.height - 84; // appbar y padding
+  double get _height =>
+      MediaQuery.of(context).size.height - 84; // appbar y padding
   late double _width;
   bool _isLandScape = false;
 
@@ -35,7 +36,8 @@ class LlavesPageController extends State<LlavesPage> {
     super.initState();
     _getLlaves();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _isLandScape = MediaQuery.of(context).orientation == Orientation.landscape;
+      _isLandScape =
+          MediaQuery.of(context).orientation == Orientation.landscape;
       _width = MediaQuery.of(context).size.width;
       _setSizes();
     });
@@ -78,12 +80,13 @@ class LlavesPageController extends State<LlavesPage> {
 
   void _editLlave(LlavesModel llave) async {
     bool reload = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return LlaveEditModal(llave: llave);
-      },
-    );
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return LlaveEditModal(llave: llave);
+          },
+        ) ??
+        false;
     if (reload) {
       _getLlaves();
     }
@@ -167,13 +170,7 @@ class _LlavesPageView extends StatelessWidget {
                         bloc: controller._llavesBloc,
                         builder: (context, state) {
                           if (state is LlavesLoading) {
-                            return const Expanded(
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: StyleConst.kcolorCafeOscuro,
-                                ),
-                              ),
-                            );
+                            return const LoadingOverlay();
                           } else if (state is LlavesError) {
                             return Flexible(
                               child: Center(
@@ -200,7 +197,8 @@ class _LlavesPageView extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 scrollDirection: Axis.vertical,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: controller._itemsPerRow,
                                   mainAxisSpacing: 12,
                                   crossAxisSpacing: 12,
@@ -224,14 +222,16 @@ class _LlavesPageView extends StatelessWidget {
                                       height: controller._cardSideSize,
                                       width: controller._cardSideSize,
                                       child: InkWell(
-                                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(15.0)),
                                         onTap: () {
                                           controller._editLlave(llave);
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
                                             children: [
                                               Icon(
                                                 Icons.key_rounded,
@@ -243,13 +243,15 @@ class _LlavesPageView extends StatelessWidget {
                                               Text(
                                                 'LLAVE ${llave.numLlave}',
                                                 style: TextStyle(
-                                                  color: llave.idAsociado == null
+                                                  color: llave.idAsociado ==
+                                                          null
                                                       ? StyleConst.kcolorCafe
                                                       : StyleConst.kcolorCarbon,
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.w900,
                                                   height: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 maxLines: 2,
                                                 softWrap: true,
@@ -261,29 +263,34 @@ class _LlavesPageView extends StatelessWidget {
                                                 const Text(
                                                   'Sin asignar',
                                                   style: TextStyle(
-                                                    color: StyleConst.kcolorCafe,
+                                                    color:
+                                                        StyleConst.kcolorCafe,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w700,
                                                     height: 1,
                                                   ),
                                                 ),
                                               // activa, asignada y disponible
-                                              if (llave.idAsociado != null && llave.estatus == 2)
+                                              if (llave.idAsociado != null &&
+                                                  llave.estatus == 2)
                                                 const Text(
                                                   'Disponible',
                                                   style: TextStyle(
-                                                    color: StyleConst.kcolorCarbon,
+                                                    color:
+                                                        StyleConst.kcolorCarbon,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w700,
                                                     height: 1,
                                                   ),
                                                 ),
                                               // activa, asignada y no disponible
-                                              if (llave.idAsociado != null && llave.estatus == 3)
+                                              if (llave.idAsociado != null &&
+                                                  llave.estatus == 3)
                                                 const Text(
                                                   'En préstamo',
                                                   style: TextStyle(
-                                                    color: StyleConst.kcolorCarbon,
+                                                    color:
+                                                        StyleConst.kcolorCarbon,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w700,
                                                     height: 1,

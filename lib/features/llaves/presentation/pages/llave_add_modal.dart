@@ -6,6 +6,7 @@ import '../../../../core/style_const.dart';
 import '../../../../core/utils/injections.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../shared/presentation/ifta_label_input.dart';
+import '../../../../shared/presentation/loading_overlay.dart';
 import '../../domain/llaves_model.dart';
 import '../../domain/llaves_usecase.dart';
 import '../bloc/llaves_bloc.dart';
@@ -21,10 +22,12 @@ class LlaveAddModalController extends State<LlaveAddModal> {
   final TextEditingController _numeroLlaveController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final LlavesBloc _llavesBloc = LlavesBloc(createLlaveUseCase: sl<CreateLlaveUseCase>());
+  final LlavesBloc _llavesBloc =
+      LlavesBloc(createLlaveUseCase: sl<CreateLlaveUseCase>());
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _LlaveAddModalView(this, constraints),
+        builder: (context, constraints) =>
+            _LlaveAddModalView(this, constraints),
       );
 
   @override
@@ -106,9 +109,12 @@ class _LlaveAddModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Número de Llave',
-                                    controller: controller._numeroLlaveController,
+                                    controller:
+                                        controller._numeroLlaveController,
                                     validators: Validators.required,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
                                   ),
                                 ],
                               ),
@@ -120,7 +126,8 @@ class _LlaveAddModalView extends StatelessWidget {
                                 children: [
                                   IftaLabelInput(
                                     label: 'Descripción de la Llave',
-                                    controller: controller._descripcionController,
+                                    controller:
+                                        controller._descripcionController,
                                     validators: Validators.required,
                                   ),
                                 ],
@@ -167,39 +174,36 @@ class _LlaveAddModalView extends StatelessWidget {
         BlocConsumer(
           bloc: controller._llavesBloc,
           builder: (context, state) {
+            if (state is LlavesLoading) {
+              return const LoadingOverlay();
+            }
             return const SizedBox();
           },
           listener: (context, state) {
             if (state is LlavesError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: StyleConst.kcolorRojo,
-                ),
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: StyleConst.kcolorRojo,
+                    ),
+                  );
+                }
+              });
             }
             if (state is LlavesCreated) {
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () {
-                  controller._closeDialog(refresh: true);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                        content: Text(state.response.message),
-                        backgroundColor: StyleConst.kcolorVerde,
-                      ),
-                    );
-                  }
-                },
-              );
-            }
-            if (state is LlavesLoading) {
-              const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller._closeDialog(refresh: true);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response.message),
+                      backgroundColor: StyleConst.kcolorVerde,
+                    ),
+                  );
+                }
+              });
             }
           },
         ),
